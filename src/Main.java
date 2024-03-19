@@ -32,26 +32,20 @@ public class Main {
         char directionInput = '0';
         double smallestDistanceFromShell = 2147483646;
 
-        String startingInput = br.readLine();
-        // Split the input string into an array of strings
-        String[] startingPoint = startingInput.split(" ");
-        // Convert the strings to numbers (assuming they are integers)
-        startingX = Integer.parseInt(startingPoint[0]);
-        startingY = Integer.parseInt(startingPoint[1]);
-        startingZ = Integer.parseInt(startingPoint[2]);
+        // get starting position
+        startingX = readInt();
+        startingY = readInt();
+        startingZ = readInt();
 
-        String goalInput = br.readLine();
-        // Split the input string into an array of strings
-        String[] goalPoint = goalInput.split(" ");
-
-        // Convert the strings to numbers (assuming they are integers)
-        goalX = Integer.parseInt(goalPoint[0]);
-        goalY = Integer.parseInt(goalPoint[1]);
-        goalZ = Integer.parseInt(goalPoint[2]);
+        // get goal position
+        goalX = readInt();
+        goalY = readInt();
+        goalZ = readInt();
 
         System.out.println("Starting point: " + startingX + " " + startingY + " " + startingZ);
         System.out.println("Goal point: " + goalX + " " + goalY + " " + goalZ);
 
+        // set current position to starting position
         currentX = startingX;
         currentY = startingY;
         currentZ = startingZ;
@@ -59,30 +53,51 @@ public class Main {
         do {
             distanceTravelledInput = readInt();
             directionInput = readCharacter();
+            if (getDistanceFromShell(currentX, currentY, currentZ) < smallestDistanceFromShell) {
+                smallestDistanceFromShell = getDistanceFromShell(currentX, currentY, currentZ);
+            }
             System.out.println("Distance traveled input: " + distanceTravelledInput + " Direction input: " + directionInput);
+            System.out.println("Distance from shell: " + getDistanceFromShell(currentX, currentY, currentZ));
             System.out.println("Current smallestDistanceFromShell: " + smallestDistanceFromShell);
             System.out.println("Current XYZ: " + currentX + " " + currentY + " " + currentZ);
             for(int i = 0; i < distanceTravelledInput; i++) {
+                System.out.println("Looping for loop");
                 switch (directionFacing) {
                     case 1:
+                        System.out.println("Case 1: Facing Positive X");
                         currentX++;
                         if (getDistanceFromShell(currentX, currentY, currentZ) < smallestDistanceFromShell)
                             smallestDistanceFromShell = getDistanceFromShell(currentX, currentY, currentZ);
                         break;
                     case 2:
+                        System.out.println("Case 2: Facing Negative X");
                         currentX--;
+                        if (getDistanceFromShell(currentX, currentY, currentZ) < smallestDistanceFromShell)
+                            smallestDistanceFromShell = getDistanceFromShell(currentX, currentY, currentZ);
                         break;
                     case 3:
+                        System.out.println("Case 3: Facing Positive Y");
                         currentY++;
+                        if (getDistanceFromShell(currentX, currentY, currentZ) < smallestDistanceFromShell)
+                            smallestDistanceFromShell = getDistanceFromShell(currentX, currentY, currentZ);
                         break;
                     case 4:
+                        System.out.println("Case 4: Facing Negative Y");
                         currentY--;
+                        if (getDistanceFromShell(currentX, currentY, currentZ) < smallestDistanceFromShell)
+                            smallestDistanceFromShell = getDistanceFromShell(currentX, currentY, currentZ);
                         break;
                     case 5:
+                        System.out.println("Case 5: Facing Positive Z");
                         currentZ++;
+                        if (getDistanceFromShell(currentX, currentY, currentZ) < smallestDistanceFromShell)
+                            smallestDistanceFromShell = getDistanceFromShell(currentX, currentY, currentZ);
                         break;
                     case 6:
+                        System.out.println("Case 6: Facing Negative Z");
                         currentZ--;
+                        if (getDistanceFromShell(currentX, currentY, currentZ) < smallestDistanceFromShell)
+                            smallestDistanceFromShell = getDistanceFromShell(currentX, currentY, currentZ);
                         break;
                 }
                 if(getDistanceFromShell(currentX,currentY,currentZ) < smallestDistanceFromShell){
@@ -90,27 +105,31 @@ public class Main {
                 }
 
             }
-            fuckingTurn(directionFacing,topPlaneFacing,directionInput);
+            fuckingTurn(directionFacing, topPlaneFacing, directionInput);
         } while(directionInput != 'E');
-        System.out.println(smallestDistanceFromShell);
+        System.out.println("FINAL smallest distance from shell: " + roundToTwoDecimals(smallestDistanceFromShell));
         br.close();
     }
     public static double getDistanceFromShell(int x, int y, int z) {
-        return Math.sqrt(Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2))+ Math.pow(z,2));
+        return Math.sqrt(Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)) + Math.pow(z,2));
     }
 
-    static String next() throws IOException {
+    private static String next() throws IOException {
         while (st == null || !st.hasMoreTokens())
             st = new StringTokenizer(br.readLine().trim());
         return st.nextToken();
     }
 
-    static int readInt() throws IOException {
+    private static int readInt() throws IOException {
         return Integer.parseInt(next());
     }
 
-    static char readCharacter() throws IOException {
+    private static char readCharacter() throws IOException {
         return next().charAt(0);
+    }
+
+    private static double roundToTwoDecimals(double input) {
+        return Math.round(input * 100.0) / 100.0;
     }
 
     public static void fuckingTurn(int noseFacing, int topFacing, char turnDirection) {
