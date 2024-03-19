@@ -103,8 +103,14 @@ public class Main {
                         break;
                 }
             }
+            System.out.println("Direction facing: " + directionFacing);
+            System.out.println("Top plane facing: " + topPlaneFacing);
+            System.out.println("Coords: " + currentX + " " + currentY + " " + currentZ);
             fuckingTurn(directionFacing, topPlaneFacing, directionInput);
         } while(directionInput != 'E');
+        System.out.println("Final Direction facing: " + directionFacing);
+        System.out.println("Final Top plane facing: " + topPlaneFacing);
+        System.out.println("Final coords: " + currentX + " " + currentY + " " + currentZ);
         System.out.println(roundToTwoDecimals(smallestDistanceFromShell));
         br.close();
     }
