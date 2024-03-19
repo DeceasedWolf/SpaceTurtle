@@ -110,8 +110,11 @@ public class Main {
         System.out.println("FINAL smallest distance from shell: " + roundToTwoDecimals(smallestDistanceFromShell));
         br.close();
     }
-    public static double getDistanceFromShell(int x, int y, int z) {
-        return Math.sqrt(Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)) + Math.pow(z,2));
+    public static double getDistanceFromShell(int currentX, int currentY, int currentZ) {
+        double deltaX = goalX - currentX;
+        double deltaY = goalY - currentY;
+        double deltaZ = goalZ - currentZ;
+        return Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2) + Math.pow(deltaZ,2));
     }
 
     private static String next() throws IOException {
