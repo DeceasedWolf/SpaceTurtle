@@ -14,41 +14,34 @@ public class Main {
     // 3 is positive y direction | 4 is negative y direction
     // 5 is positive z direction | 6 is negative z direction
     private static byte topPlaneFacing = 5;
-    private static int startingX;
-    private static int startingY;
-    private static int startingZ;
     private static int goalX;
     private static int goalY;
     private static int goalZ;
-    private static int currentX;
-    private static int currentY;
-    private static int currentZ;
+    private static int movingToX;
+    private static int movingToY;
+    private static int movingToZ;
     // set up a buffered reader for input (ty Jeff for template)
-    private static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    private static final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     private static StringTokenizer st;
     public static void main(String[] args) throws IOException {
-
-        int distanceTravelledInput = 0;
-        char directionInput = '0';
+        int distanceTravelledInput;
+        char directionInput;
         double smallestDistanceFromShell = 2147483646;
 
         // get starting position
-        startingX = readInt();
-        startingY = readInt();
-        startingZ = readInt();
+        int startingX = readInt();
+        int startingY = readInt();
+        int startingZ = readInt();
 
         // get goal position
         goalX = readInt();
         goalY = readInt();
         goalZ = readInt();
 
-        System.out.println("Starting point: " + startingX + " " + startingY + " " + startingZ);
-        System.out.println("Goal point: " + goalX + " " + goalY + " " + goalZ);
-
         // set current position to starting position
-        currentX = startingX;
-        currentY = startingY;
-        currentZ = startingZ;
+        int currentX = startingX;
+        int currentY = startingY;
+        int currentZ = startingZ;
 
         do {
             distanceTravelledInput = readInt();
@@ -56,65 +49,105 @@ public class Main {
             if (getDistanceFromShell(currentX, currentY, currentZ) < smallestDistanceFromShell) {
                 smallestDistanceFromShell = getDistanceFromShell(currentX, currentY, currentZ);
             }
-            System.out.println("Distance traveled input: " + distanceTravelledInput + " Direction input: " + directionInput);
-            System.out.println("Distance from shell: " + getDistanceFromShell(currentX, currentY, currentZ));
-            System.out.println("Current smallestDistanceFromShell: " + smallestDistanceFromShell);
-            System.out.println("Current XYZ: " + currentX + " " + currentY + " " + currentZ);
+            switch (directionFacing) {
+                case 1:
+                    movingToX = currentX + distanceTravelledInput;
+                    break;
+                case 2:
+                    movingToX = currentX - distanceTravelledInput;
+                    break;
+                case 3:
+                    movingToY = currentY + distanceTravelledInput;
+                    break;
+                case 4:
+                    movingToY = currentY - distanceTravelledInput;
+                    break;
+                case 5:
+                    movingToZ = currentZ + distanceTravelledInput;
+                    break;
+                case 6:
+                    movingToZ = currentZ - distanceTravelledInput;
+                    break;
+            }
             for(int i = 0; i < distanceTravelledInput; i++) {
-                System.out.println("Looping for loop");
                 switch (directionFacing) {
                     case 1:
-                        System.out.println("Case 1: Facing Positive X");
                         currentX++;
                         if (getDistanceFromShell(currentX, currentY, currentZ) < smallestDistanceFromShell)
                             smallestDistanceFromShell = getDistanceFromShell(currentX, currentY, currentZ);
                         break;
                     case 2:
-                        System.out.println("Case 2: Facing Negative X");
                         currentX--;
                         if (getDistanceFromShell(currentX, currentY, currentZ) < smallestDistanceFromShell)
                             smallestDistanceFromShell = getDistanceFromShell(currentX, currentY, currentZ);
                         break;
                     case 3:
-                        System.out.println("Case 3: Facing Positive Y");
                         currentY++;
                         if (getDistanceFromShell(currentX, currentY, currentZ) < smallestDistanceFromShell)
                             smallestDistanceFromShell = getDistanceFromShell(currentX, currentY, currentZ);
                         break;
                     case 4:
-                        System.out.println("Case 4: Facing Negative Y");
                         currentY--;
                         if (getDistanceFromShell(currentX, currentY, currentZ) < smallestDistanceFromShell)
                             smallestDistanceFromShell = getDistanceFromShell(currentX, currentY, currentZ);
                         break;
                     case 5:
-                        System.out.println("Case 5: Facing Positive Z");
                         currentZ++;
                         if (getDistanceFromShell(currentX, currentY, currentZ) < smallestDistanceFromShell)
                             smallestDistanceFromShell = getDistanceFromShell(currentX, currentY, currentZ);
                         break;
                     case 6:
-                        System.out.println("Case 6: Facing Negative Z");
                         currentZ--;
                         if (getDistanceFromShell(currentX, currentY, currentZ) < smallestDistanceFromShell)
                             smallestDistanceFromShell = getDistanceFromShell(currentX, currentY, currentZ);
                         break;
                 }
-                if(getDistanceFromShell(currentX,currentY,currentZ) < smallestDistanceFromShell){
-                    smallestDistanceFromShell = getDistanceFromShell(currentX,currentY,currentZ);
-                }
-
             }
             fuckingTurn(directionFacing, topPlaneFacing, directionInput);
         } while(directionInput != 'E');
-        System.out.println("FINAL smallest distance from shell: " + roundToTwoDecimals(smallestDistanceFromShell));
+        System.out.println(roundToTwoDecimals(smallestDistanceFromShell));
         br.close();
     }
     public static double getDistanceFromShell(int currentX, int currentY, int currentZ) {
+        return Math.min(checkEndPointDistance(currentX, currentY, currentZ), checkDistanceFromLine(currentX, currentY, currentZ));
+    }
+
+    public static double checkEndPointDistance(int currentX, int currentY, int currentZ) {
         double deltaX = goalX - currentX;
         double deltaY = goalY - currentY;
         double deltaZ = goalZ - currentZ;
         return Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2) + Math.pow(deltaZ,2));
+    }
+
+    public static double checkDistanceFromLine(int currentX, int currentY, int currentZ) {
+        if (directionFacing == 1 || directionFacing == 2) {
+            // we are moving in the X direction
+            if ((goalX < movingToX && goalX > currentX) || (goalX > movingToX && goalX < currentX)) {
+                double deltaY = goalY - currentY;
+                double deltaZ = goalZ - currentZ;
+                return Math.sqrt(Math.pow(deltaY, 2) + Math.pow(deltaZ, 2));
+            } else {
+                return 2147483646;
+            }
+        } else if (directionFacing == 3 || directionFacing == 4) {
+            // we are moving in the Y direction
+            if ((goalY < movingToY && goalY > currentY) || (goalY > movingToY && goalY < currentY)) {
+                double deltaX = goalX - currentX;
+                double deltaZ = goalZ - currentZ;
+                return Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaZ, 2));
+            } else {
+                return 2147483646;
+            }
+        } else {
+            // we are moving in the Z direction
+            if ((goalZ < movingToZ && goalZ > currentZ) || (goalZ > movingToZ && goalZ < currentZ)) {
+                double deltaX = goalX - currentX;
+                double deltaY = goalY - currentY;
+                return Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
+            } else {
+                return 2147483646;
+            }
+        }
     }
 
     private static String next() throws IOException {
