@@ -185,7 +185,6 @@ public class Main {
                     case 3:
                         // turn depending on requested turn direction
                         switch (turnDirection) {
-
                             case 'L':
                                 directionFacing = 6;
                                 break;
@@ -254,11 +253,11 @@ public class Main {
                                 break;
                             case 'U':
                                 directionFacing = 6;
-                                topPlaneFacing = 1;
+                                topPlaneFacing = 2;
                                 break;
                             case 'D':
                                 directionFacing = 5;
-                                topPlaneFacing = 2;
+                                topPlaneFacing = 1;
                                 break;
                         }
                         break;
@@ -279,12 +278,12 @@ public class Main {
                                 directionFacing = 6;
                                 break;
                             case 'U':
-                                directionFacing = 4;
-                                topPlaneFacing = 2;
-                                break;
-                            case 'D':
                                 directionFacing = 3;
                                 topPlaneFacing = 1;
+                                break;
+                            case 'D':
+                                directionFacing = 4;
+                                topPlaneFacing = 2;
                                 break;
                         }
                         break;
