@@ -14,18 +14,19 @@ public class Main {
     // 3 is positive y direction | 4 is negative y direction
     // 5 is positive z direction | 6 is negative z direction
     private static byte topPlaneFacing = 5;
+    // the coordinates of the goal
     private static int goalX;
     private static int goalY;
     private static int goalZ;
-    private static int movingToX;
-    private static int movingToY;
-    private static int movingToZ;
-    // set up a buffered reader for input (ty Jeff for template)
+
+    // set up a buffered reader for input
     private static final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     private static StringTokenizer st;
     public static void main(String[] args) throws IOException {
+        // declare variables for the input
         int distanceTravelledInput;
         char directionInput;
+        // smallestDistanceFromShell is set to the largest possible value so that the first distance from the shell will always be smaller
         double smallestDistanceFromShell = 2147483646;
 
         // get starting position
@@ -43,137 +44,87 @@ public class Main {
         int currentY = startingY;
         int currentZ = startingZ;
 
+        // loop until direction input is E (end)
         do {
+            // get input for distance travelled and direction
             distanceTravelledInput = readInt();
             directionInput = readCharacter();
+            // update the smallest distance from shell
             if (getDistanceFromShell(currentX, currentY, currentZ) < smallestDistanceFromShell) {
                 smallestDistanceFromShell = getDistanceFromShell(currentX, currentY, currentZ);
             }
-            switch (directionFacing) {
-                case 1:
-                    movingToX = currentX + distanceTravelledInput;
-                    break;
-                case 2:
-                    movingToX = currentX - distanceTravelledInput;
-                    break;
-                case 3:
-                    movingToY = currentY + distanceTravelledInput;
-                    break;
-                case 4:
-                    movingToY = currentY - distanceTravelledInput;
-                    break;
-                case 5:
-                    movingToZ = currentZ + distanceTravelledInput;
-                    break;
-                case 6:
-                    movingToZ = currentZ - distanceTravelledInput;
-                    break;
-            }
+            // move the ship one unit at a time and update the smallest distance from shell if necessary each time
             for(int i = 0; i < distanceTravelledInput; i++) {
+                // switch between 6 possible facing directions
                 switch (directionFacing) {
                     case 1:
                         currentX++;
+                        // update the smallest distance from shell if necessary
                         if (getDistanceFromShell(currentX, currentY, currentZ) < smallestDistanceFromShell)
                             smallestDistanceFromShell = getDistanceFromShell(currentX, currentY, currentZ);
                         break;
                     case 2:
                         currentX--;
+                        // update the smallest distance from shell if necessary
                         if (getDistanceFromShell(currentX, currentY, currentZ) < smallestDistanceFromShell)
                             smallestDistanceFromShell = getDistanceFromShell(currentX, currentY, currentZ);
                         break;
                     case 3:
                         currentY++;
+                        // update the smallest distance from shell if necessary
                         if (getDistanceFromShell(currentX, currentY, currentZ) < smallestDistanceFromShell)
                             smallestDistanceFromShell = getDistanceFromShell(currentX, currentY, currentZ);
                         break;
                     case 4:
                         currentY--;
+                        // update the smallest distance from shell if necessary
                         if (getDistanceFromShell(currentX, currentY, currentZ) < smallestDistanceFromShell)
                             smallestDistanceFromShell = getDistanceFromShell(currentX, currentY, currentZ);
                         break;
                     case 5:
                         currentZ++;
+                        // update the smallest distance from shell if necessary
                         if (getDistanceFromShell(currentX, currentY, currentZ) < smallestDistanceFromShell)
                             smallestDistanceFromShell = getDistanceFromShell(currentX, currentY, currentZ);
                         break;
                     case 6:
                         currentZ--;
+                        // update the smallest distance from shell if necessary
                         if (getDistanceFromShell(currentX, currentY, currentZ) < smallestDistanceFromShell)
                             smallestDistanceFromShell = getDistanceFromShell(currentX, currentY, currentZ);
                         break;
                 }
             }
-            System.out.println("Direction facing: " + directionFacing);
-            System.out.println("Top plane facing: " + topPlaneFacing);
-            System.out.println("Coords: " + currentX + " " + currentY + " " + currentZ);
+            // turn the ship after it has moved
             fuckingTurn(directionFacing, topPlaneFacing, directionInput);
         } while(directionInput != 'E');
-        System.out.println("Final Direction facing: " + directionFacing);
-        System.out.println("Final Top plane facing: " + topPlaneFacing);
-        System.out.println("Final coords: " + currentX + " " + currentY + " " + currentZ);
+        // print answer
         System.out.println(roundToTwoDecimals(smallestDistanceFromShell));
         br.close();
     }
-    public static double getDistanceFromShell(int currentX, int currentY, int currentZ) {
-        return Math.min(checkEndPointDistance(currentX, currentY, currentZ), checkDistanceFromLine(currentX, currentY, currentZ));
-    }
 
-    public static double checkEndPointDistance(int currentX, int currentY, int currentZ) {
+    /**
+     * This method gets the distance from the current position to the goal using the formula for
+     * calculating the Euclidean distance in 3D space.
+     */
+    public static double getDistanceFromShell(int currentX, int currentY, int currentZ) {
         double deltaX = goalX - currentX;
         double deltaY = goalY - currentY;
         double deltaZ = goalZ - currentZ;
         return Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2) + Math.pow(deltaZ,2));
     }
 
-    public static double checkDistanceFromLine(int currentX, int currentY, int currentZ) {
-        if (directionFacing == 1 || directionFacing == 2) {
-            // we are moving in the X direction
-            if ((goalX < movingToX && goalX > currentX) || (goalX > movingToX && goalX < currentX)) {
-                double deltaY = goalY - currentY;
-                double deltaZ = goalZ - currentZ;
-                return Math.sqrt(Math.pow(deltaY, 2) + Math.pow(deltaZ, 2));
-            } else {
-                return 2147483646;
-            }
-        } else if (directionFacing == 3 || directionFacing == 4) {
-            // we are moving in the Y direction
-            if ((goalY < movingToY && goalY > currentY) || (goalY > movingToY && goalY < currentY)) {
-                double deltaX = goalX - currentX;
-                double deltaZ = goalZ - currentZ;
-                return Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaZ, 2));
-            } else {
-                return 2147483646;
-            }
-        } else {
-            // we are moving in the Z direction
-            if ((goalZ < movingToZ && goalZ > currentZ) || (goalZ > movingToZ && goalZ < currentZ)) {
-                double deltaX = goalX - currentX;
-                double deltaY = goalY - currentY;
-                return Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
-            } else {
-                return 2147483646;
-            }
-        }
-    }
-
-    private static String next() throws IOException {
-        while (st == null || !st.hasMoreTokens())
-            st = new StringTokenizer(br.readLine().trim());
-        return st.nextToken();
-    }
-
-    private static int readInt() throws IOException {
-        return Integer.parseInt(next());
-    }
-
-    private static char readCharacter() throws IOException {
-        return next().charAt(0);
-    }
-
+    /**
+     * This method rounds the input to 2 decimal places.
+     */
     private static double roundToTwoDecimals(double input) {
         return Math.round(input * 100.0) / 100.0;
     }
 
+    /**
+     * This method takes in the current heading of the ship, the direction the top plane of the ship is facing,
+     * and the direction the ship is to turn. It then updates the directionFacing and topPlaneFacing variables.
+     */
     public static void fuckingTurn(int noseFacing, int topFacing, char turnDirection) {
         // switch between 6 possible facing directions
         switch(noseFacing) {
@@ -695,6 +646,19 @@ public class Main {
                 break;
         }
 
+    }
+
+    // The next three methods are template code for using buffered reader
+    private static String next() throws IOException {
+        while (st == null || !st.hasMoreTokens())
+            st = new StringTokenizer(br.readLine().trim());
+        return st.nextToken();
+    }
+    private static int readInt() throws IOException {
+        return Integer.parseInt(next());
+    }
+    private static char readCharacter() throws IOException {
+        return next().charAt(0);
     }
 
 }
