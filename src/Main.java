@@ -18,6 +18,9 @@ public class Main {
     private static int goalX;
     private static int goalY;
     private static int goalZ;
+    private static int movingToX;
+    private static int movingToY;
+    private static int movingToZ;
 
     // set up a buffered reader for input
     private static final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -52,6 +55,27 @@ public class Main {
             // update the smallest distance from shell
             if (getDistanceFromShell(currentX, currentY, currentZ) < smallestDistanceFromShell) {
                 smallestDistanceFromShell = getDistanceFromShell(currentX, currentY, currentZ);
+            }
+            // set the moving to coordinates depending on the direction the ship is facing
+            switch (directionFacing) {
+                case 1:
+                    movingToX = currentX + distanceTravelledInput;
+                    break;
+                case 2:
+                    movingToX = currentX - distanceTravelledInput;
+                    break;
+                case 3:
+                    movingToY = currentY + distanceTravelledInput;
+                    break;
+                case 4:
+                    movingToY = currentY - distanceTravelledInput;
+                    break;
+                case 5:
+                    movingToZ = currentZ + distanceTravelledInput;
+                    break;
+                case 6:
+                    movingToZ = currentZ - distanceTravelledInput;
+                    break;
             }
             // move the ship one unit at a time and update the smallest distance from shell if necessary each time
             for(int i = 0; i < distanceTravelledInput; i++) {
@@ -104,14 +128,58 @@ public class Main {
     }
 
     /**
+     * Get the shortest distance this input
+     */
+    public static double getDistanceFromShell(int currentX, int currentY, int currentZ) {
+        return Math.min(checkEndPointDistance(currentX, currentY, currentZ), checkDistanceFromLine(currentX, currentY, currentZ));
+    }
+
+    /**
      * This method gets the distance from the current position to the goal using the formula for
      * calculating the Euclidean distance in 3D space.
      */
-    public static double getDistanceFromShell(int currentX, int currentY, int currentZ) {
+    public static double checkEndPointDistance(int currentX, int currentY, int currentZ) {
         double deltaX = goalX - currentX;
         double deltaY = goalY - currentY;
         double deltaZ = goalZ - currentZ;
         return Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2) + Math.pow(deltaZ,2));
+    }
+
+    /**
+     * This method checks the shortest distance between the line that you are moving along and the goal
+     */
+    public static double checkDistanceFromLine(int currentX, int currentY, int currentZ) {
+        if (directionFacing == 1 || directionFacing == 2) {
+            // we are moving in the X direction
+            // check if the goal is within movement range
+            if ((goalX < movingToX && goalX > currentX) || (goalX > movingToX && goalX < currentX)) {
+                double deltaY = goalY - currentY;
+                double deltaZ = goalZ - currentZ;
+                return Math.sqrt(Math.pow(deltaY, 2) + Math.pow(deltaZ, 2));
+            } else {
+                return 2147483646;
+            }
+        } else if (directionFacing == 3 || directionFacing == 4) {
+            // we are moving in the Y direction
+            // check if the goal is within movement range
+            if ((goalY < movingToY && goalY > currentY) || (goalY > movingToY && goalY < currentY)) {
+                double deltaX = goalX - currentX;
+                double deltaZ = goalZ - currentZ;
+                return Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaZ, 2));
+            } else {
+                return 2147483646;
+            }
+        } else {
+            // we are moving in the Z direction
+            // check if the goal is within movement range
+            if ((goalZ < movingToZ && goalZ > currentZ) || (goalZ > movingToZ && goalZ < currentZ)) {
+                double deltaX = goalX - currentX;
+                double deltaY = goalY - currentY;
+                return Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
+            } else {
+                return 2147483646;
+            }
+        }
     }
 
     /**
