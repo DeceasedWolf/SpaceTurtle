@@ -1,6 +1,11 @@
 import java.io.*;
 import java.util.*;
 
+/**
+ * @author Mathis Luo & Robbie Muranaka
+ * Date: April 1st, 2024
+ * Solves the CCC '04 S4 - Space Turtle
+ */
 public class Main {
 
     // directionFacing ranges from 1 to 6
